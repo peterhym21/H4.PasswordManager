@@ -1,15 +1,21 @@
 ﻿
 # Krav
 
-- [ ] login side
-- [ ] tjek om login matcher i fil
-- [ ] lav crypteret fil med salted Hashed Passwords og deres salts
-  - [ ] udvid med DB 
-- [ ] lav crypteret fil med users og deres salts
-   - [ ] udvid med DB 
-- [ ] menu
-  - [ ] se alle passwords
-  - [ ] tilføj password
-  - [ ] slet password
-  - [ ]  
+## første priotet
+- [X] menu
+  - [ ] se alle hashed passwords
+  - [X] tilføj password
+  - [X] slet password
 
+### anden prioitet
+
+- [X]Gem fil med all passwords
+  - [ ] Crypter Filen 
+- [ ] Gem Fil med User og deres Salt
+
+
+#### hvis det kan nås (trjede prioitet)
+- [ ] lav et login
+  - [ ] tjekker op mod userens password
+
+ 
