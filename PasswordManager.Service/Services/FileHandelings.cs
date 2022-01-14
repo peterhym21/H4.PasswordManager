@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,6 +43,7 @@ namespace PasswordManager.Service.Services
                 if (password == passwordDTO.HashedPassword && website == passwordDTO.Website)
                 {
                     passwordDTOs.Remove(passwordDTO);
+                    Console.WriteLine("Dit Password Er Nu slettet og din PasswordManger er Updateret");
                 }
                 else
                 {
@@ -65,7 +67,7 @@ namespace PasswordManager.Service.Services
 
 
 
-        public static void EncryptFileSymmetric(EncryptedPacket encryptedPacket)
+        public static void EncryptFileSymmetric()
         {
             #region Symmetric
             //var aes = new EncryptDecrypt();
@@ -81,20 +83,28 @@ namespace PasswordManager.Service.Services
 
             #region Asymmetric
 
-            var rsaParams = new EncryptDecryptAsymetric();
-            const string original = "Text to encrypt";
+            //var rsaParams = new EncryptDecryptAsymetric();
+            //const string original = "Text to encrypt";
 
-            rsaParams.AssignNewKey();
-            var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
+            //rsaParams.AssignNewKey();
+            //var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
 
-            var encryptedRsa = rsaParams.EncryptData(Encoding.UTF8.GetBytes(lines));
+            //var encryptedRsa = rsaParams.EncryptData(Encoding.UTF8.GetBytes(lines));
+
             #endregion
 
 
-            SaveEncryptedFiles(encryptedRsa);
+            X509Certificate2 myCert = Certificate.LoadCertificate(StoreLocation.CurrentUser, "CN=CryptoCert");
+
+            var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
+
+            string encrypted = Certificate.Encrypt(myCert, lines);
+
+            SaveEncryptedFiles(encrypted);
         }
 
-        public static void DecryptFileSymmetric(EncryptedPacket encryptedPacket)
+
+        public static void DecryptFileSymmetric()
         {
             #region Symmetric
             //var aes = new EncryptDecrypt();
@@ -111,27 +121,37 @@ namespace PasswordManager.Service.Services
 
             #region Asymmetric
 
-            var rsaParams = new EncryptDecryptAsymetric();
-            var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
-            var decryptedRsaParams = rsaParams.DecryptData(Encoding.UTF8.GetBytes(lines));
+            //var rsaParams = new EncryptDecryptAsymetric();
+            //var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
+            //var decryptedRsaParams = rsaParams.DecryptData(Encoding.UTF8.GetBytes(lines));
 
             #endregion
 
-            SaveDecryptedFiles(Encoding.UTF8.GetString(decryptedRsaParams));
+            X509Certificate2 myCert = Certificate.LoadCertificate(StoreLocation.CurrentUser, "CN=CryptoCert");
+
+            var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
+            if (lines != "")
+            {
+                string decrypted = Certificate.Decrypt(myCert, lines);
+                SaveDecryptedFiles(decrypted);
+            }
+            
+
+            
         }
 
 
 
 
-        public static void SaveEncryptedFiles(byte[] encryptDecrypt)
+        public static void SaveEncryptedFiles(string encryptDecrypt)
         {
-                File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt", Convert.ToBase64String(encryptDecrypt));
+            File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt", encryptDecrypt);
         }
 
 
         public static void SaveDecryptedFiles(string Decrypt)
         {
-            File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt",Decrypt );
+            File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt", Decrypt);
         }
 
 

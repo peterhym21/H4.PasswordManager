@@ -7,10 +7,9 @@ namespace MyApp
 {
     internal class Program
     {
-        
+
         static void Main(string[] args)
         {
-            EncryptedPacket encryptedPacket  = new EncryptedPacket();
             do
             {
                 Console.Clear();
@@ -20,7 +19,7 @@ namespace MyApp
                 {
                     case "Tilføj Nyt Password":
                         Console.Clear();
-                        NewPassword(encryptedPacket);
+                        NewPassword();
                         break;
                     case "Se Alle Hashed Passwords":
                         Console.Clear();
@@ -28,7 +27,7 @@ namespace MyApp
                         break;
                     case "Slet Password":
                         Console.Clear();
-                        DeletePassword(encryptedPacket);
+                        DeletePassword();
                         break;
                     case "Afslut":
                         Environment.Exit(0);
@@ -41,7 +40,7 @@ namespace MyApp
         }
 
 
-        static void NewPassword(EncryptedPacket encryptedPacket)
+        static void NewPassword()
         {
             PasswordDTO password = new PasswordDTO();
             Console.WriteLine("Tilføj Nyt Password");
@@ -50,6 +49,10 @@ namespace MyApp
             Console.WriteLine("Indtast Dit Nye Password: ");
             string newPas = Console.ReadLine();
 
+            FileHandelings.DecryptFileSymmetric();
+
+            Thread.Sleep(500);
+
             password.Salt = Hashing.GenerateSalt();
 
             password.HashedPassword = Hashing.HashPasswordWithSalt(Encoding.UTF8.GetBytes(newPas), password.Salt);
@@ -57,13 +60,13 @@ namespace MyApp
             FileHandelings.SavePassword(password);
 
             Console.WriteLine("Dit Password Er Nu Hashet og gemt i din PasswordManager");
-            FileHandelings.EncryptFileSymmetric(encryptedPacket);
+            FileHandelings.EncryptFileSymmetric();
             Console.ReadLine();
 
         }
 
 
-        static void DeletePassword(EncryptedPacket encryptedPacket)
+        static void DeletePassword()
         {
 
             Console.WriteLine("Slet et exsisterende Password");
@@ -72,11 +75,17 @@ namespace MyApp
             Console.WriteLine("Indtast Siden Passwordet hører til: ");
             string delPas = Console.ReadLine();
 
-            FileHandelings.DecryptFileSymmetric(encryptedPacket);
+            FileHandelings.DecryptFileSymmetric();
+
+            Thread.Sleep(1000);
 
             FileHandelings.DeletePassword(delPas, website);
 
-            Console.WriteLine("Dit Password Er Nu slettet og din PasswordManger er Updateret");
+            Console.ReadLine();
+
+            FileHandelings.EncryptFileSymmetric();
+
+
             Console.ReadLine();
 
         }
