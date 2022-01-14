@@ -10,7 +10,7 @@
 ### anden prioitet
 
 - [X]Gem fil med all passwords
-  - [ ] Crypter Filen 
+  - [X] Crypter Filen 
 - [ ] Gem Fil med User og deres Salt
 
 

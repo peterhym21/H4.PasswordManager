@@ -61,10 +61,79 @@ namespace PasswordManager.Service.Services
                 }
             }
 
-
-
-
         }
+
+
+
+        public static void EncryptFileSymmetric(EncryptedPacket encryptedPacket)
+        {
+            #region Symmetric
+            //var aes = new EncryptDecrypt();
+            //encryptedPacket.EncryptedSessionKey = aes.GenerateRandomNumber(32);
+            //encryptedPacket.Iv = aes.GenerateRandomNumber(16);
+
+            //var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
+
+            //var encrypted = aes.Crypto(Encoding.UTF8.GetBytes(lines), encryptedPacket.EncryptedSessionKey, encryptedPacket.Iv, true);
+
+
+            #endregion
+
+            #region Asymmetric
+
+            var rsaParams = new EncryptDecryptAsymetric();
+            const string original = "Text to encrypt";
+
+            rsaParams.AssignNewKey();
+            var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
+
+            var encryptedRsa = rsaParams.EncryptData(Encoding.UTF8.GetBytes(lines));
+            #endregion
+
+
+            SaveEncryptedFiles(encryptedRsa);
+        }
+
+        public static void DecryptFileSymmetric(EncryptedPacket encryptedPacket)
+        {
+            #region Symmetric
+            //var aes = new EncryptDecrypt();
+
+            //var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
+
+            //var decrypted = aes.Crypto(Encoding.UTF8.GetBytes(lines), encryptedPacket.EncryptedSessionKey, encryptedPacket.Iv, false);
+
+            //var decryptedfile = Encoding.UTF8.GetString(decrypted);
+            //Console.WriteLine(decryptedfile);
+            //Console.ReadLine();
+
+            #endregion
+
+            #region Asymmetric
+
+            var rsaParams = new EncryptDecryptAsymetric();
+            var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
+            var decryptedRsaParams = rsaParams.DecryptData(Encoding.UTF8.GetBytes(lines));
+
+            #endregion
+
+            SaveDecryptedFiles(Encoding.UTF8.GetString(decryptedRsaParams));
+        }
+
+
+
+
+        public static void SaveEncryptedFiles(byte[] encryptDecrypt)
+        {
+                File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt", Convert.ToBase64String(encryptDecrypt));
+        }
+
+
+        public static void SaveDecryptedFiles(string Decrypt)
+        {
+            File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt",Decrypt );
+        }
+
 
     }
 }
