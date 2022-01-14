@@ -49,8 +49,6 @@ namespace MyApp
             Console.WriteLine("Indtast Dit Nye Password: ");
             string newPas = Console.ReadLine();
 
-            FileHandelings.DecryptFileSymmetric();
-
             password.Salt = Hashing.GenerateSalt();
 
             password.HashedPassword = Hashing.HashPasswordWithSalt(Encoding.UTF8.GetBytes(newPas), password.Salt);
@@ -58,7 +56,7 @@ namespace MyApp
             FileHandelings.SavePassword(password);
 
             Console.WriteLine("Dit Password Er Nu Hashet og gemt i din PasswordManager");
-            FileHandelings.EncryptFileSymmetric();
+            FileHandelings.EncryptFile(password.Website);
             Console.ReadLine();
 
         }
@@ -74,11 +72,9 @@ namespace MyApp
             Console.WriteLine("Indtast Siden Passwordet hører til: ");
             string delPas = Console.ReadLine();
 
-            FileHandelings.DecryptFileSymmetric();
+            FileHandelings.DecryptFile(website);
 
             FileHandelings.DeletePassword(delPas, website);
-
-            FileHandelings.EncryptFileSymmetric();
 
 
             Console.ReadLine();
@@ -89,11 +85,7 @@ namespace MyApp
         static void ShowAllPasswords()
         {
             Console.WriteLine("Vis alle HashedPasswords");
-            FileHandelings.DecryptFileSymmetric();
-
             FileHandelings.ShowAllHashedPasswords();
-
-            FileHandelings.EncryptFileSymmetric();
             Console.ReadLine();
         }
 
