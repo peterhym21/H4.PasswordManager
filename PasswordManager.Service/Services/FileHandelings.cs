@@ -40,10 +40,11 @@ namespace PasswordManager.Service.Services
             foreach (PasswordDTO passwordDTO in passwordDTOs)
             {
                 var password = Hashing.HashPasswordWithSalt(Encoding.UTF8.GetBytes(delPassword), passwordDTO.Salt);
-                if (password == passwordDTO.HashedPassword && website == passwordDTO.Website)
+                if (password.SequenceEqual(passwordDTO.HashedPassword) && website == passwordDTO.Website)
                 {
                     passwordDTOs.Remove(passwordDTO);
                     Console.WriteLine("Dit Password Er Nu slettet og din PasswordManger er Updateret");
+                    break;
                 }
                 else
                 {
@@ -52,17 +53,38 @@ namespace PasswordManager.Service.Services
                 }
             }
 
-            foreach (PasswordDTO item in passwordDTOs)
+            if (passwordDTOs.Count != 0)
+            {
+                foreach (PasswordDTO item in passwordDTOs)
+                {
+                    if (File.Exists(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt") == true)
+                    {
+                        File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt",
+                              item.Website + Environment.NewLine
+                            + Convert.ToBase64String(item.HashedPassword) + Environment.NewLine
+                            + Convert.ToBase64String(item.Salt) + Environment.NewLine);
+                    }
+                }
+
+            }
+            else
             {
                 if (File.Exists(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt") == true)
                 {
-                    File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt",
-                          item.Website + Environment.NewLine
-                        + Convert.ToBase64String(item.HashedPassword) + Environment.NewLine
-                        + Convert.ToBase64String(item.Salt) + Environment.NewLine);
+                    File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt","");
                 }
             }
 
+
+
+        }
+
+
+
+        public static void ShowAllHashedPasswords()
+        {
+            string passwords = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
+            Console.WriteLine(passwords);
         }
 
 
@@ -97,10 +119,11 @@ namespace PasswordManager.Service.Services
             X509Certificate2 myCert = Certificate.LoadCertificate(StoreLocation.CurrentUser, "CN=CryptoCert");
 
             var lines = File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt");
-
-            string encrypted = Certificate.Encrypt(myCert, lines);
-
-            SaveEncryptedFiles(encrypted);
+            if (lines != "")
+            {
+                string encrypted = Certificate.Encrypt(myCert, lines);
+                SaveEncryptedFiles(encrypted);
+            }
         }
 
 
@@ -140,12 +163,13 @@ namespace PasswordManager.Service.Services
             
         }
 
-
-
-
         public static void SaveEncryptedFiles(string encryptDecrypt)
         {
-            File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt", encryptDecrypt);
+            if (File.ReadAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt") != "")
+            {
+                File.WriteAllText(@"C:\skole\eux\H4\SOFTWARETEST OG -SIKKERHED del 2\PasswordManager\SecretFiles\Passwords.txt", encryptDecrypt);
+            }
+            
         }
 
 

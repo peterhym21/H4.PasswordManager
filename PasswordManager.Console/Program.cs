@@ -13,7 +13,7 @@ namespace MyApp
             do
             {
                 Console.Clear();
-                Menu menu = new Menu(new List<string>() { "Tilføj Nyt Password", "Se Alle Hashed Passwords", "Slet Password", "Afslut" });
+                Menu menu = new Menu(new List<string>() { "Tilføj Nyt Password", "Slet Password", "Se Alle Hashed Passwords", "Afslut" });
                 menu.Select();
                 switch (menu.Result())
                 {
@@ -21,13 +21,13 @@ namespace MyApp
                         Console.Clear();
                         NewPassword();
                         break;
-                    case "Se Alle Hashed Passwords":
-                        Console.Clear();
-
-                        break;
                     case "Slet Password":
                         Console.Clear();
                         DeletePassword();
+                        break;
+                    case "Se Alle Hashed Passwords":
+                        Console.Clear();
+                        ShowAllPasswords();
                         break;
                     case "Afslut":
                         Environment.Exit(0);
@@ -51,8 +51,6 @@ namespace MyApp
 
             FileHandelings.DecryptFileSymmetric();
 
-            Thread.Sleep(500);
-
             password.Salt = Hashing.GenerateSalt();
 
             password.HashedPassword = Hashing.HashPasswordWithSalt(Encoding.UTF8.GetBytes(newPas), password.Salt);
@@ -68,6 +66,7 @@ namespace MyApp
 
         static void DeletePassword()
         {
+            
 
             Console.WriteLine("Slet et exsisterende Password");
             Console.WriteLine("Indtast Siden Passwordet hører til: ");
@@ -77,11 +76,7 @@ namespace MyApp
 
             FileHandelings.DecryptFileSymmetric();
 
-            Thread.Sleep(1000);
-
             FileHandelings.DeletePassword(delPas, website);
-
-            Console.ReadLine();
 
             FileHandelings.EncryptFileSymmetric();
 
@@ -91,7 +86,16 @@ namespace MyApp
         }
 
 
+        static void ShowAllPasswords()
+        {
+            Console.WriteLine("Vis alle HashedPasswords");
+            FileHandelings.DecryptFileSymmetric();
 
+            FileHandelings.ShowAllHashedPasswords();
+
+            FileHandelings.EncryptFileSymmetric();
+            Console.ReadLine();
+        }
 
 
 
